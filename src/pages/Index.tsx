@@ -1,201 +1,215 @@
-
 import { useState, useMemo } from "react";
+import { Search, Building2, MapPin, BarChart3, Users, RefreshCw } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { SearchBar } from "@/components/SearchBar";
 import { ResultCard } from "@/components/ResultCard";
 import { DetailModal } from "@/components/DetailModal";
 import { administrativeData } from "@/data/administrativeData";
 import { AdministrativeUnit } from "@/types/administrative";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { MapPin, Building2, Home, Search, TrendingUp } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Index = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedProvince, setSelectedProvince] = useState("");
   const [selectedDistrict, setSelectedDistrict] = useState("");
   const [selectedUnit, setSelectedUnit] = useState<AdministrativeUnit | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Enhanced filtering logic
-  const filteredData = useMemo(() => {
-    return administrativeData.filter((unit) => {
-      const matchesSearch = searchTerm === "" || 
-        unit.ten_tinh.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        unit.quan_huyen.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        unit.ten_xa.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        searchTerm.toLowerCase().includes(unit.ten_tinh.toLowerCase()) ||
-        searchTerm.toLowerCase().includes(unit.quan_huyen.toLowerCase()) ||
-        searchTerm.toLowerCase().includes(unit.ten_xa.toLowerCase());
-
-      const matchesProvince = selectedProvince === "" || selectedProvince === "all" || unit.ten_tinh === selectedProvince;
-      const matchesDistrict = selectedDistrict === "" || selectedDistrict === "all" || unit.quan_huyen === selectedDistrict;
-
-      return matchesSearch && matchesProvince && matchesDistrict;
-    });
-  }, [searchTerm, selectedProvince, selectedDistrict]);
-
-  // Get unique provinces
   const provinces = useMemo(() => {
-    return [...new Set(administrativeData.map(unit => unit.ten_tinh))].sort();
+    const provinceSet = new Set<string>();
+    administrativeData.forEach(unit => provinceSet.add(unit.ten_tinh));
+    return Array.from(provinceSet);
   }, []);
 
-  // Get unique districts based on selected province
   const districts = useMemo(() => {
-    const filtered = selectedProvince && selectedProvince !== "all"
-      ? administrativeData.filter(unit => unit.ten_tinh === selectedProvince)
-      : administrativeData;
-    return [...new Set(filtered.map(unit => unit.quan_huyen))].sort();
-  }, [selectedProvince]);
+    const districtSet = new Set<string>();
+    administrativeData.forEach(unit => districtSet.add(unit.quan_huyen));
+    return Array.from(districtSet);
+  }, []);
 
-  const stats = {
-    totalProvinces: provinces.length,
-    totalDistricts: new Set(administrativeData.map(unit => unit.quan_huyen)).size,
-    totalUnits: administrativeData.length,
-    filteredResults: filteredData.length
+  const filteredUnits = useMemo(() => {
+    let filtered = administrativeData;
+
+    if (searchTerm) {
+      const lowerSearchTerm = searchTerm.toLowerCase();
+      filtered = filtered.filter(unit =>
+        unit.ten_xa.toLowerCase().includes(lowerSearchTerm) ||
+        unit.quan_huyen.toLowerCase().includes(lowerSearchTerm) ||
+        unit.ten_tinh.toLowerCase().includes(lowerSearchTerm)
+      );
+    }
+
+    if (selectedProvince && selectedProvince !== "all") {
+      filtered = filtered.filter(unit => unit.ten_tinh === selectedProvince);
+    }
+
+    if (selectedDistrict && selectedDistrict !== "all") {
+      filtered = filtered.filter(unit => unit.quan_huyen === selectedDistrict);
+    }
+
+    return filtered;
+  }, [searchTerm, selectedProvince, selectedDistrict]);
+
+  const totalUnits = administrativeData.length;
+  const totalProvinces = provinces.length;
+  const totalDistricts = districts.length;
+
+  const openModal = (unit: AdministrativeUnit) => {
+    setSelectedUnit(unit);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-100">
-      {/* Enhanced Header */}
-      <header className="bg-gradient-to-r from-blue-600 to-indigo-700 shadow-xl">
-        <div className="container mx-auto px-4 py-12">
-          <div className="text-center text-white">
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <div className="p-3 bg-white/20 rounded-full">
-                <Search className="h-8 w-8" />
-              </div>
-              <h1 className="text-5xl font-bold">
-                Tra Cứu Đơn Vị Hành Chính
-              </h1>
-            </div>
-            <p className="text-blue-100 text-xl max-w-3xl mx-auto leading-relaxed">
-              Hệ thống tra cứu thông tin toàn diện về tỉnh thành, quận huyện và phường xã trên toàn quốc với công nghệ tìm kiếm thông minh
-            </p>
-          </div>
-        </div>
-      </header>
-
-      <main className="container mx-auto px-4 py-12">
-        {/* Enhanced Statistics */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
-          <Card className="text-center hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-blue-50 to-blue-100">
-            <CardContent className="p-8">
-              <div className="flex items-center justify-center mb-4">
-                <div className="p-4 bg-blue-600 rounded-full">
-                  <MapPin className="h-8 w-8 text-white" />
-                </div>
-              </div>
-              <div className="text-4xl font-bold text-blue-600 mb-2">{stats.totalProvinces}</div>
-              <div className="text-gray-700 font-medium">Tỉnh/Thành phố</div>
-            </CardContent>
-          </Card>
-
-          <Card className="text-center hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-green-50 to-green-100">
-            <CardContent className="p-8">
-              <div className="flex items-center justify-center mb-4">
-                <div className="p-4 bg-green-600 rounded-full">
-                  <Building2 className="h-8 w-8 text-white" />
-                </div>
-              </div>
-              <div className="text-4xl font-bold text-green-600 mb-2">{stats.totalDistricts}</div>
-              <div className="text-gray-700 font-medium">Quận/Huyện</div>
-            </CardContent>
-          </Card>
-
-          <Card className="text-center hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-purple-50 to-purple-100">
-            <CardContent className="p-8">
-              <div className="flex items-center justify-center mb-4">
-                <div className="p-4 bg-purple-600 rounded-full">
-                  <Home className="h-8 w-8 text-white" />
-                </div>
-              </div>
-              <div className="text-4xl font-bold text-purple-600 mb-2">{stats.totalUnits.toLocaleString()}</div>
-              <div className="text-gray-700 font-medium">Phường/Xã</div>
-            </CardContent>
-          </Card>
-
-          <Card className="text-center hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-orange-50 to-orange-100">
-            <CardContent className="p-8">
-              <div className="flex items-center justify-center mb-4">
-                <div className="p-4 bg-orange-600 rounded-full">
-                  <TrendingUp className="h-8 w-8 text-white" />
-                </div>
-              </div>
-              <div className="text-4xl font-bold text-orange-600 mb-2">{stats.filteredResults.toLocaleString()}</div>
-              <div className="text-gray-700 font-medium">Kết quả tìm thấy</div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Enhanced Search Bar */}
-        <div className="mb-12">
-          <SearchBar
-            searchTerm={searchTerm}
-            onSearchChange={setSearchTerm}
-            selectedProvince={selectedProvince}
-            onProvinceChange={setSelectedProvince}
-            selectedDistrict={selectedDistrict}
-            onDistrictChange={setSelectedDistrict}
-            provinces={provinces}
-            districts={districts}
-          />
-        </div>
-
-        {/* Enhanced Results Section */}
-        <div className="space-y-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+      {/* Header */}
+      <div className="bg-white shadow-sm border-b sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-              <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-indigo-600 rounded-full"></div>
-              Kết quả tìm kiếm
-            </h2>
-            <Badge variant="secondary" className="text-lg px-4 py-2 bg-blue-50 text-blue-700 border-blue-200">
-              {filteredData.length.toLocaleString()} kết quả
-            </Badge>
+            <h1 className="text-3xl font-bold text-gray-800 flex items-center gap-2">
+              <Building2 className="h-8 w-8 text-blue-600" />
+              Tra cứu đơn vị hành chính
+            </h1>
+            <div className="flex items-center gap-4">
+              <Link 
+                to="/conversion" 
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-lg hover:shadow-xl"
+              >
+                <RefreshCw className="h-4 w-4" />
+                Công cụ chuyển đổi
+              </Link>
+              <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                {administrativeData.length.toLocaleString()} đơn vị
+              </Badge>
+            </div>
           </div>
+        </div>
+      </div>
 
-          {filteredData.length === 0 ? (
-            <Card className="text-center py-16 border-0 shadow-lg bg-gradient-to-br from-gray-50 to-gray-100">
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="w-24 h-24 mx-auto bg-gray-200 rounded-full flex items-center justify-center">
-                    <Search className="h-12 w-12 text-gray-400" />
-                  </div>
-                  <div className="text-gray-500 text-xl font-medium">Không tìm thấy kết quả</div>
-                  <div className="text-gray-400 max-w-md mx-auto">
-                    Thử thay đổi từ khóa tìm kiếm hoặc điều chỉnh bộ lọc để có kết quả phù hợp hơn
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* Navigation Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <Card className="shadow-lg border-0 bg-gradient-to-br from-blue-600 to-blue-700 text-white hover:shadow-xl transition-all duration-300 cursor-pointer">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-4">
+                <Search className="h-12 w-12 text-blue-100" />
+                <div>
+                  <h3 className="text-xl font-bold mb-2">Tra cứu thông tin</h3>
+                  <p className="text-blue-100">Tìm kiếm thông tin đơn vị hành chính hiện tại</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Link to="/conversion">
+            <Card className="shadow-lg border-0 bg-gradient-to-br from-green-600 to-green-700 text-white hover:shadow-xl transition-all duration-300 cursor-pointer h-full">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-4">
+                  <RefreshCw className="h-12 w-12 text-green-100" />
+                  <div>
+                    <h3 className="text-xl font-bold mb-2">Công cụ chuyển đổi</h3>
+                    <p className="text-green-100">Chuyển đổi từ địa chỉ cũ sang địa chỉ mới</p>
                   </div>
                 </div>
               </CardContent>
             </Card>
+          </Link>
+        </div>
+
+        {/* Search Bar */}
+        <SearchBar
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
+          selectedProvince={selectedProvince}
+          onProvinceChange={setSelectedProvince}
+          selectedDistrict={selectedDistrict}
+          onDistrictChange={setSelectedDistrict}
+          provinces={provinces}
+          districts={districts}
+        />
+
+        {/* Statistics */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
+          <Card className="bg-blue-50 border-blue-200 border shadow-sm">
+            <CardContent className="flex items-center space-x-4 p-4">
+              <div className="rounded-full bg-blue-200 p-2">
+                <MapPin className="h-5 w-5 text-blue-700" />
+              </div>
+              <div className="space-y-1">
+                <CardTitle className="text-lg font-semibold">
+                  {totalUnits.toLocaleString()}
+                </CardTitle>
+                <CardDescription className="text-sm text-gray-500">
+                  Đơn vị hành chính
+                </CardDescription>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-green-50 border-green-200 border shadow-sm">
+            <CardContent className="flex items-center space-x-4 p-4">
+              <div className="rounded-full bg-green-200 p-2">
+                <BarChart3 className="h-5 w-5 text-green-700" />
+              </div>
+              <div className="space-y-1">
+                <CardTitle className="text-lg font-semibold">
+                  {totalProvinces.toLocaleString()}
+                </CardTitle>
+                <CardDescription className="text-sm text-gray-500">
+                  Tỉnh/Thành phố
+                </CardDescription>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-purple-50 border-purple-200 border shadow-sm">
+            <CardContent className="flex items-center space-x-4 p-4">
+              <div className="rounded-full bg-purple-200 p-2">
+                <Users className="h-5 w-5 text-purple-700" />
+              </div>
+              <div className="space-y-1">
+                <CardTitle className="text-lg font-semibold">
+                  {totalDistricts.toLocaleString()}
+                </CardTitle>
+                <CardDescription className="text-sm text-gray-500">
+                  Quận/Huyện
+                </CardDescription>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Results */}
+        <div className="mt-8 space-y-6">
+          {filteredUnits.length === 0 ? (
+            <Card className="text-center py-12 bg-gray-50 border border-gray-200">
+              <CardContent>
+                <Search className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                  Không tìm thấy kết quả
+                </h3>
+                <p className="text-gray-700">
+                  Không có đơn vị hành chính nào phù hợp với tiêu chí tìm kiếm của
+                  bạn.
+                </p>
+              </CardContent>
+            </Card>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredData.slice(0, 50).map((unit, index) => (
-                <ResultCard
-                  key={`${unit.ma_tinh}-${unit.ma_xa}-${index}`}
-                  unit={unit}
-                  onClick={() => setSelectedUnit(unit)}
-                />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredUnits.map((unit) => (
+                <ResultCard key={`${unit.ma_tinh}-${unit.ma_xa}`} unit={unit} onClick={() => openModal(unit)} />
               ))}
             </div>
           )}
-
-          {filteredData.length > 50 && (
-            <div className="text-center py-8">
-              <Badge variant="outline" className="text-sm px-4 py-2">
-                Hiển thị 50 kết quả đầu tiên. Vui lòng sử dụng bộ lọc để thu hẹp kết quả.
-              </Badge>
-            </div>
-          )}
         </div>
-      </main>
+      </div>
 
-      {/* Enhanced Modal */}
-      {selectedUnit && (
-        <DetailModal
-          unit={selectedUnit}
-          isOpen={!!selectedUnit}
-          onClose={() => setSelectedUnit(null)}
-        />
-      )}
+      {/* Detail Modal */}
+      <DetailModal isOpen={isModalOpen} onClose={closeModal} unit={selectedUnit} />
     </div>
   );
 };
