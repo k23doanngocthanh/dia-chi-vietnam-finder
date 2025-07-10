@@ -23,8 +23,8 @@ const Index = () => {
         unit.quan_huyen.toLowerCase().includes(searchTerm.toLowerCase()) ||
         unit.ten_xa.toLowerCase().includes(searchTerm.toLowerCase());
 
-      const matchesProvince = selectedProvince === "" || unit.ten_tinh === selectedProvince;
-      const matchesDistrict = selectedDistrict === "" || unit.quan_huyen === selectedDistrict;
+      const matchesProvince = selectedProvince === "" || selectedProvince === "all" || unit.ten_tinh === selectedProvince;
+      const matchesDistrict = selectedDistrict === "" || selectedDistrict === "all" || unit.quan_huyen === selectedDistrict;
 
       return matchesSearch && matchesProvince && matchesDistrict;
     });
@@ -37,7 +37,7 @@ const Index = () => {
 
   // Lấy danh sách quận/huyện duy nhất theo tỉnh đã chọn
   const districts = useMemo(() => {
-    const filtered = selectedProvince 
+    const filtered = selectedProvince && selectedProvince !== "all"
       ? administrativeData.filter(unit => unit.ten_tinh === selectedProvince)
       : administrativeData;
     return [...new Set(filtered.map(unit => unit.quan_huyen))];

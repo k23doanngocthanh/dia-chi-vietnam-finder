@@ -1,5 +1,5 @@
 
-import { Search, Filter, X } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -58,7 +58,7 @@ export const SearchBar = ({
                   <SelectValue placeholder="Chọn Tỉnh/Thành phố" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Tất cả tỉnh/thành phố</SelectItem>
+                  <SelectItem value="all">Tất cả tỉnh/thành phố</SelectItem>
                   {provinces.map((province) => (
                     <SelectItem key={province} value={province}>
                       {province}
@@ -74,7 +74,7 @@ export const SearchBar = ({
                   <SelectValue placeholder="Chọn Quận/Huyện" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Tất cả quận/huyện</SelectItem>
+                  <SelectItem value="all">Tất cả quận/huyện</SelectItem>
                   {districts.map((district) => (
                     <SelectItem key={district} value={district}>
                       {district}
