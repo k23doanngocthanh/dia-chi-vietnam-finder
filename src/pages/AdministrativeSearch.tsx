@@ -14,8 +14,8 @@ import { Link } from "react-router-dom";
 
 const AdministrativeSearch = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedProvince, setSelectedProvince] = useState("");
-  const [selectedDistrict, setSelectedDistrict] = useState("");
+  const [selectedProvince, setSelectedProvince] = useState("all");
+  const [selectedDistrict, setSelectedDistrict] = useState("all");
   const [results, setResults] = useState<AdministrativeUnit[]>([]);
   const [provinces, setProvinces] = useState<string[]>([]);
   const [districts, setDistricts] = useState<string[]>([]);
@@ -61,8 +61,8 @@ const AdministrativeSearch = () => {
     try {
       const searchResults = await administrativeAPI.search({
         q: searchTerm,
-        province: selectedProvince,
-        district: selectedDistrict,
+        province: selectedProvince === "all" ? undefined : selectedProvince,
+        district: selectedDistrict === "all" ? undefined : selectedDistrict,
         page,
         limit: 20
       });
@@ -79,6 +79,7 @@ const AdministrativeSearch = () => {
   };
 
   const openModal = (unit: AdministrativeUnit) => {
+    console.log('Opening modal for unit:', unit);
     setSelectedUnit(unit);
     setIsModalOpen(true);
   };
@@ -137,7 +138,7 @@ const AdministrativeSearch = () => {
                   <SelectValue placeholder="Chọn tỉnh/thành" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Tất cả tỉnh/thành</SelectItem>
+                  <SelectItem value="all">Tất cả tỉnh/thành</SelectItem>
                   {provinces.map((province) => (
                     <SelectItem key={province} value={province}>
                       {province}
@@ -151,7 +152,7 @@ const AdministrativeSearch = () => {
                   <SelectValue placeholder="Chọn quận/huyện" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Tất cả quận/huyện</SelectItem>
+                  <SelectItem value="all">Tất cả quận/huyện</SelectItem>
                   {districts.map((district) => (
                     <SelectItem key={district} value={district}>
                       {district}
@@ -170,8 +171,8 @@ const AdministrativeSearch = () => {
                 variant="outline" 
                 onClick={() => {
                   setSearchTerm("");
-                  setSelectedProvince("");
-                  setSelectedDistrict("");
+                  setSelectedProvince("all");
+                  setSelectedDistrict("all");
                   handleSearch(1);
                 }}
               >

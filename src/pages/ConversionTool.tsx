@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Search, ArrowRight, MapPin, RefreshCw, Home } from "lucide-react";
+import { Search, ArrowRight, MapPin, RefreshCw, ArrowLeft, Loader2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -56,8 +56,8 @@ const ConversionTool = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Link to="/" className="flex items-center gap-2 text-blue-600 hover:text-blue-800 transition-colors">
-                <Home className="h-5 w-5" />
-                <span className="font-medium">Trang chủ</span>
+                <ArrowLeft className="h-5 w-5" />
+                <span className="font-medium">API Portal</span>
               </Link>
               <div className="text-gray-300">|</div>
               <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
@@ -66,7 +66,7 @@ const ConversionTool = () => {
               </h1>
             </div>
             <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-              Tra cứu miễn phí
+              API miễn phí
             </Badge>
           </div>
         </div>
@@ -74,10 +74,11 @@ const ConversionTool = () => {
 
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Search Section */}
-        <Card className="mb-8 shadow-xl border-0 bg-gradient-to-r from-white via-blue-50 to-white">
+        <Card className="mb-8 shadow-xl border-0">
           <CardHeader className="text-center pb-6">
-            <CardTitle className="text-3xl font-bold text-gray-800 mb-2">
-              🔄 Chuyển đổi địa chỉ hành chính
+            <CardTitle className="text-3xl font-bold text-gray-800 mb-2 flex items-center justify-center gap-3">
+              <RefreshCw className="h-8 w-8 text-blue-600" />
+              Chuyển đổi địa chỉ hành chính
             </CardTitle>
             <p className="text-gray-600 text-lg">
               Nhập địa chỉ cũ để tìm địa chỉ mới sau sáp nhập
@@ -107,7 +108,7 @@ const ConversionTool = () => {
               >
                 {isSearching ? (
                   <>
-                    <RefreshCw className="h-4 w-4 animate-spin" />
+                    <Loader2 className="h-4 w-4 animate-spin" />
                     Đang tìm kiếm...
                   </>
                 ) : (
@@ -147,7 +148,7 @@ const ConversionTool = () => {
         {/* Results Section */}
         {isSearching && (
           <div className="text-center py-12">
-            <RefreshCw className="h-8 w-8 animate-spin text-blue-600 mx-auto mb-4" />
+            <Loader2 className="h-8 w-8 animate-spin text-blue-600 mx-auto mb-4" />
             <p className="text-gray-600">Đang tìm kiếm thông tin chuyển đổi...</p>
           </div>
         )}
