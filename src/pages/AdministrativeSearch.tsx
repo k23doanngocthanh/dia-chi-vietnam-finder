@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { Search, Building2, MapPin, ArrowLeft, Loader2 } from "lucide-react";
+import { Search, Building2, MapPin, ArrowRight, Loader2, Code, Globe } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -98,19 +98,35 @@ const AdministrativeSearch = () => {
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <Link to="/" className="flex items-center gap-2 text-blue-600 hover:text-blue-800">
-                <ArrowLeft className="h-5 w-5" />
-                <span>API Portal</span>
-              </Link>
-              <div className="text-gray-300">|</div>
-              <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-                <Building2 className="h-6 w-6 text-blue-600" />
-                Tra cứu đơn vị hành chính
-              </h1>
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+                  <div className="p-2 bg-blue-600 rounded-lg">
+                    <Building2 className="h-8 w-8 text-white" />
+                  </div>
+                  OpenAPI DevHub
+                </h1>
+                <p className="text-lg text-gray-600 mt-1">
+                  Tra cứu đơn vị hành chính Việt Nam
+                </p>
+              </div>
             </div>
-            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-              {stats.totalUnits.toLocaleString()} đơn vị
-            </Badge>
+            <div className="flex items-center gap-3">
+              <Link to="/api">
+                <Button variant="outline" className="flex items-center gap-2">
+                  <Code className="h-4 w-4" />
+                  API Portal
+                </Button>
+              </Link>
+              <Link to="/conversion">
+                <Button variant="outline" className="flex items-center gap-2">
+                  <Globe className="h-4 w-4" />
+                  Chuyển đổi
+                </Button>
+              </Link>
+              <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                {stats.totalUnits.toLocaleString()} đơn vị
+              </Badge>
+            </div>
           </div>
         </div>
       </div>

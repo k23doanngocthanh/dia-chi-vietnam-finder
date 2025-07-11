@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Search, ArrowRight, MapPin, RefreshCw, ArrowLeft, Loader2 } from "lucide-react";
+import { Search, ArrowRight, MapPin, RefreshCw, ArrowLeft, Loader2, Code, Building2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -57,7 +57,7 @@ const ConversionTool = () => {
             <div className="flex items-center gap-4">
               <Link to="/" className="flex items-center gap-2 text-blue-600 hover:text-blue-800 transition-colors">
                 <ArrowLeft className="h-5 w-5" />
-                <span className="font-medium">API Portal</span>
+                <span className="font-medium">Trang chủ</span>
               </Link>
               <div className="text-gray-300">|</div>
               <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
@@ -65,9 +65,17 @@ const ConversionTool = () => {
                 Công cụ chuyển đổi địa chỉ
               </h1>
             </div>
-            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-              API miễn phí
-            </Badge>
+            <div className="flex items-center gap-3">
+              <Link to="/api">
+                <Button variant="outline" className="flex items-center gap-2">
+                  <Code className="h-4 w-4" />
+                  API Portal
+                </Button>
+              </Link>
+              <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                API miễn phí
+              </Badge>
+            </div>
           </div>
         </div>
       </div>

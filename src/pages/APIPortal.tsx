@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Code, Database, Zap, Globe, Shield, Users } from "lucide-react";
+import { Code, Database, Zap, Globe, Shield, Users, ArrowLeft, Building2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -62,16 +62,23 @@ print(data)`
       <div className="bg-white border-b shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-                <div className="p-2 bg-blue-600 rounded-lg">
-                  <Code className="h-8 w-8 text-white" />
-                </div>
-                OpenAPI DevHub
-              </h1>
-              <p className="text-lg text-gray-600 mt-2">
-                Nền tảng API miễn phí cho developers Việt Nam
-              </p>
+            <div className="flex items-center gap-4">
+              <Link to="/" className="flex items-center gap-2 text-blue-600 hover:text-blue-800">
+                <ArrowLeft className="h-5 w-5" />
+                <span>Trang chủ</span>
+              </Link>
+              <div className="text-gray-300">|</div>
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+                  <div className="p-2 bg-blue-600 rounded-lg">
+                    <Code className="h-8 w-8 text-white" />
+                  </div>
+                  API Portal
+                </h1>
+                <p className="text-lg text-gray-600 mt-2">
+                  Nền tảng API miễn phí cho developers Việt Nam
+                </p>
+              </div>
             </div>
             <div className="text-right">
               <Badge className="bg-green-100 text-green-800 border-green-300 text-sm px-3 py-1">
@@ -195,7 +202,7 @@ print(data)`
                   <div className="space-y-6">
                     {/* Quick Actions */}
                     <div className="flex gap-3">
-                      <Link to="/administrative">
+                      <Link to="/">
                         <Button className="bg-blue-600 hover:bg-blue-700">
                           🔍 Thử ngay
                         </Button>
