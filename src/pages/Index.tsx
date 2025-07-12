@@ -20,14 +20,26 @@ const Index = () => {
   const provinces = useMemo(() => {
     const provinceSet = new Set<string>();
     administrativeData.forEach(unit => provinceSet.add(unit.ten_tinh));
-    return Array.from(provinceSet);
+    return Array.from(provinceSet).sort();
   }, []);
 
   const districts = useMemo(() => {
     const districtSet = new Set<string>();
     administrativeData.forEach(unit => districtSet.add(unit.quan_huyen));
-    return Array.from(districtSet);
+    return Array.from(districtSet).sort();
   }, []);
+
+  // Filter available districts based on selected province
+  const availableDistricts = useMemo(() => {
+    if (!selectedProvince || selectedProvince === "all") {
+      return districts;
+    }
+    const filteredDistricts = new Set<string>();
+    administrativeData
+      .filter(unit => unit.ten_tinh === selectedProvince)
+      .forEach(unit => filteredDistricts.add(unit.quan_huyen));
+    return Array.from(filteredDistricts).sort();
+  }, [selectedProvince, districts]);
 
   const filteredUnits = useMemo(() => {
     let filtered = administrativeData;
@@ -131,6 +143,7 @@ const Index = () => {
           onDistrictChange={setSelectedDistrict}
           provinces={provinces}
           districts={districts}
+          availableDistricts={availableDistricts}
         />
 
         {/* Statistics */}
