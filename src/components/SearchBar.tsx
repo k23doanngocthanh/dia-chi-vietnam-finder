@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface SearchBarProps {
   searchTerm: string;
@@ -15,6 +16,7 @@ interface SearchBarProps {
   onDistrictChange: (value: string) => void;
   provinces: string[];
   districts: string[];
+  availableDistricts: string[];
 }
 
 export const SearchBar = ({
@@ -25,8 +27,11 @@ export const SearchBar = ({
   selectedDistrict,
   onDistrictChange,
   provinces,
-  districts
+  districts,
+  availableDistricts
 }: SearchBarProps) => {
+  const isMobile = useIsMobile();
+
   const clearFilters = () => {
     onSearchChange("");
     onProvinceChange("");
@@ -67,33 +72,33 @@ export const SearchBar = ({
 
   return (
     <Card className="w-full shadow-xl border-0 bg-gradient-to-r from-blue-50 via-white to-indigo-50">
-      <CardContent className="p-8">
-        <div className="space-y-6">
+      <CardContent className={`${isMobile ? 'p-4' : 'p-8'}`}>
+        <div className="space-y-4 md:space-y-6">
           {/* Header */}
           <div className="text-center space-y-2">
             <div className="flex items-center justify-center gap-2 text-blue-600 mb-2">
-              <MapPin className="h-6 w-6" />
-              <span className="text-xl font-semibold">Tìm kiếm nâng cao</span>
+              <MapPin className="h-5 w-5 md:h-6 md:w-6" />
+              <span className="text-lg md:text-xl font-semibold">Tìm kiếm nâng cao</span>
             </div>
-            <p className="text-gray-600 text-sm">
+            <p className="text-gray-600 text-xs md:text-sm">
               Nhập địa chỉ đầy đủ hoặc sử dụng bộ lọc để tìm kiếm chính xác
             </p>
           </div>
 
           {/* Main search input */}
           <div className="relative">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+            <Search className="absolute left-3 md:left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4 md:h-5 md:w-5" />
             <Input
               type="text"
-              placeholder="Ví dụ: Xã Nghĩa Thắng huyện Đăk Rlap tỉnh Đăk Nông"
+              placeholder={isMobile ? "Nhập địa chỉ..." : "Ví dụ: Xã Nghĩa Thắng huyện Đăk Rlap tỉnh Đăk Nông"}
               value={searchTerm}
               onChange={(e) => handleSearchChange(e.target.value)}
-              className="pl-12 pr-4 py-4 text-base border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 rounded-xl"
+              className="pl-10 md:pl-12 pr-4 py-3 md:py-4 text-sm md:text-base border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 rounded-xl"
             />
           </div>
 
           {/* Advanced filters */}
-          <div className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
+          <div className="bg-white rounded-xl p-4 md:p-6 border border-gray-100 shadow-sm">
             <div className="flex items-center gap-2 mb-4">
               <Filter className="h-4 w-4 text-gray-500" />
               <span className="text-sm font-medium text-gray-700">Bộ lọc nâng cao</span>
@@ -103,7 +108,7 @@ export const SearchBar = ({
               <div className="space-y-2">
                 <label className="text-sm font-medium text-gray-700">Tỉnh/Thành phố</label>
                 <Select value={selectedProvince} onValueChange={onProvinceChange}>
-                  <SelectTrigger className="w-full h-11 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
+                  <SelectTrigger className="w-full h-10 md:h-11 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
                     <SelectValue placeholder="Chọn tỉnh/thành phố" />
                   </SelectTrigger>
                   <SelectContent className="max-h-60">
@@ -120,12 +125,12 @@ export const SearchBar = ({
               <div className="space-y-2">
                 <label className="text-sm font-medium text-gray-700">Quận/Huyện</label>
                 <Select value={selectedDistrict} onValueChange={onDistrictChange}>
-                  <SelectTrigger className="w-full h-11 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
+                  <SelectTrigger className="w-full h-10 md:h-11 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
                     <SelectValue placeholder="Chọn quận/huyện" />
                   </SelectTrigger>
                   <SelectContent className="max-h-60">
                     <SelectItem value="all">🏘️ Tất cả quận/huyện</SelectItem>
-                    {districts.map((district) => (
+                    {availableDistricts.map((district) => (
                       <SelectItem key={district} value={district}>
                         🏢 {district}
                       </SelectItem>
@@ -138,32 +143,33 @@ export const SearchBar = ({
 
           {/* Active filters and clear button */}
           {hasActiveFilters && (
-            <div className="flex items-center justify-between p-4 bg-blue-50 rounded-xl border border-blue-200">
+            <div className="flex items-center justify-between p-3 md:p-4 bg-blue-50 rounded-xl border border-blue-200">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="text-sm font-medium text-blue-700">Bộ lọc đang áp dụng:</span>
+                <span className="text-xs md:text-sm font-medium text-blue-700">Bộ lọc đang áp dụng:</span>
                 {searchTerm && (
-                  <Badge variant="secondary" className="bg-blue-100 text-blue-700 border-blue-200">
-                    Từ khóa: {searchTerm.length > 20 ? searchTerm.substring(0, 20) + '...' : searchTerm}
+                  <Badge variant="secondary" className="bg-blue-100 text-blue-700 border-blue-200 text-xs">
+                    Từ khóa: {searchTerm.length > (isMobile ? 15 : 20) ? searchTerm.substring(0, isMobile ? 15 : 20) + '...' : searchTerm}
                   </Badge>
                 )}
                 {selectedProvince && selectedProvince !== "all" && (
-                  <Badge variant="secondary" className="bg-green-100 text-green-700 border-green-200">
+                  <Badge variant="secondary" className="bg-green-100 text-green-700 border-green-200 text-xs">
                     {selectedProvince}
                   </Badge>
                 )}
                 {selectedDistrict && selectedDistrict !== "all" && (
-                  <Badge variant="secondary" className="bg-purple-100 text-purple-700 border-purple-200">
+                  <Badge variant="secondary" className="bg-purple-100 text-purple-700 border-purple-200 text-xs">
                     {selectedDistrict}
                   </Badge>
                 )}
               </div>
               <Button
                 variant="outline"
+                size={isMobile ? "sm" : "default"}
                 onClick={clearFilters}
                 className="flex items-center gap-2 text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300"
               >
                 <X className="h-4 w-4" />
-                Xóa bộ lọc
+                {!isMobile && "Xóa bộ lọc"}
               </Button>
             </div>
           )}

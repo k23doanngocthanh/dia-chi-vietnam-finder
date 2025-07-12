@@ -72,6 +72,15 @@ class AdministrativeAPI {
     return Array.from(districts).sort();
   }
 
+  async getDistrictsByProvince(province: string): Promise<string[]> {
+    const { administrativeData } = await import('@/data/administrativeData');
+    const districts = new Set<string>();
+    administrativeData
+      .filter(unit => unit.ten_tinh === province)
+      .forEach(unit => districts.add(unit.quan_huyen));
+    return Array.from(districts).sort();
+  }
+
   async getStats() {
     const { administrativeData } = await import('@/data/administrativeData');
     const provinces = new Set<string>();
